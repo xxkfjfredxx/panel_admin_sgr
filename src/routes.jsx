@@ -11,6 +11,8 @@ import DashboardLayout      from '@/layouts/Dashboard';
 import LoginPage            from '@/pages/LoginPage';
 import HomePage             from '@/pages/HomePage';
 import CompanyListPage      from '@/pages/CompanyListPage';
+import UserListPage         from '@/pages/UserListPage';
+import RegisterUserPage     from '@/pages/RegisterUserPage';
 import RegisterCompanyPage  from '@/pages/RegisterCompanyPage';
 import CompanyDetailPage    from '@/pages/CompanyDetailPage';
 import ErrorFallback        from '@/components/ErrorFallback';
@@ -25,6 +27,8 @@ const router = createBrowserRouter(
         <Route index                    element={<HomePage />} />
         <Route path="empresas"          element={<CompanyListPage />} />
         <Route path="empresas/crear"    element={<RegisterCompanyPage />} />
+        <Route path="usuarios"          element={<UserListPage />} />
+        <Route path="usuarios/crear"    element={<RegisterUserPage />} />
         <Route
           path="empresas/:id"
           element={<CompanyDetailPage />}

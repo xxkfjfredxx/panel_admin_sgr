@@ -4,6 +4,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 const navItems = [
   { name: 'Dashboard', path: '/home' },
   { name: 'Empresas', path: '/home/empresas' },
+  { name: 'Usuarios', path: '/home/usuarios' },
 ];
 
 export default function DashboardLayout() {

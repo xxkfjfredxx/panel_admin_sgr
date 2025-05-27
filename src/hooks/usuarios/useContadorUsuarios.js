@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
 
-export function useContadorUsuarios() {
+export  function useContadorUsuarios() {
   return useQuery({
     queryKey: ['usuarios-count'],
     queryFn: async () => {
@@ -10,7 +10,7 @@ export function useContadorUsuarios() {
         return res.data?.count ?? 0;
       } catch (error) {
         console.warn('⚠️ No se pudo cargar usuarios:', error.response?.status);
-        return 'no-autorizado'; // ← fallback seguro
+        return 'no-autorizado';
       }
     },
     retry: false,
