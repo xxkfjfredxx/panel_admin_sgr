@@ -1,68 +1,85 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "@/services/api";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email === "admin@admin.com" && password === "admin") {
+    setError("");
+
+    try {
+      const res = await api.post("/login/", { username, password });
+
+      const { token, user } = res.data;
+
+      // ✅ Guardar en localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // Redirigir al dashboard
       navigate("/home");
-    } else {
-      alert("Credenciales incorrectas");
+    } catch (err) {
+      setError("Usuario o contraseña incorrectos.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-indigo-100 to-blue-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 sm:p-10 animate-fade-in">
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-extrabold text-indigo-700">SGR Panel Global</h1>
-          <p className="text-sm text-gray-500 mt-1">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-indigo-100 to-blue-100 dark:from-gray-900 dark:to-gray-800 px-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-extrabold text-indigo-700 dark:text-white">SGR Panel Global</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Ingresa como administrador para gestionar tus empresas
           </p>
         </div>
 
+        {error && (
+          <div className="text-red-600 text-sm text-center bg-red-100 border border-red-300 p-2 rounded-lg">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Usuario</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="ej. admin@admin.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Ej. admin"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-800 dark:text-white"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contraseña</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-800 dark:text-white"
               required
             />
           </div>
 
-          <div>
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg shadow-sm transition duration-200"
-            >
-              Iniciar sesión
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-200"
+          >
+            Iniciar sesión
+          </button>
         </form>
 
-        <footer className="text-xs text-gray-400 text-center mt-6">
-          Sistema de Gestión de Riesgos © 2025
-        </footer>
+        <p className="text-xs text-center text-gray-400 dark:text-gray-500 mt-6">
+          © {new Date().getFullYear()} TuEmpresa. Todos los derechos reservados.
+        </p>
       </div>
     </div>
   );
