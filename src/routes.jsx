@@ -7,15 +7,16 @@ import {
   Navigate,
 } from 'react-router-dom';
 
-import DashboardLayout      from '@/layouts/Dashboard';
-import LoginPage            from '@/pages/LoginPage';
-import HomePage             from '@/pages/HomePage';
-import CompanyListPage      from '@/pages/CompanyListPage';
-import UserListPage         from '@/pages/UserListPage';
-import RegisterUserPage     from '@/pages/RegisterUserPage';
-import RegisterCompanyPage  from '@/pages/RegisterCompanyPage';
-import CompanyDetailPage    from '@/pages/CompanyDetailPage';
-import ErrorFallback        from '@/components/ErrorFallback';
+import DashboardLayout       from '@/layouts/Dashboard';
+import LoginPage             from '@/pages/LoginPage';
+import HomePage              from '@/pages/HomePage';
+import CompanyListPage       from '@/pages/CompanyListPage';
+import RegisterUserPage      from '@/pages/usuarios/RegisterUserPage';
+import RegisterCompanyPage   from '@/pages/RegisterCompanyPage';
+import CompanyDetailPage     from '@/pages/CompanyDetailPage';
+import EmpresaUsuariosPage   from '@/pages/usuarios/EmpresaUsuariosPage'; // ✅ agregado
+import ErrorFallback         from '@/components/ErrorFallback';
+import UserDetailPage        from '@/pages/usuarios/UserDetailPage';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,20 +25,22 @@ const router = createBrowserRouter(
       <Route path="/" element={<Navigate to="/home" replace />} />
 
       <Route path="/home" element={<DashboardLayout />}>
-        <Route index                    element={<HomePage />} />
-        <Route path="empresas"          element={<CompanyListPage />} />
-        <Route path="empresas/crear"    element={<RegisterCompanyPage />} />
-        <Route path="usuarios"          element={<UserListPage />} />
-        <Route path="usuarios/crear"    element={<RegisterUserPage />} />
-        <Route
-          path="empresas/:id"
-          element={<CompanyDetailPage />}
-          errorElement={<ErrorFallback />}   /* ← manejar 404/errores de la vista    */
-        />
+        <Route index element={<HomePage />} />
+        <Route path="empresas" element={<CompanyListPage />} />
+        <Route path="empresas/crear" element={<RegisterCompanyPage />} />
+        <Route path="empresas/:id" element={<CompanyDetailPage />} errorElement={<ErrorFallback />} />
+        
+        {/* ✅ Ruta faltante agregada */}
+        <Route path="empresas/:id/usuarios" element={<EmpresaUsuariosPage />} />
+        <Route path="empresas/:id/usuarios/crear" element={<RegisterUserPage />} />
+
+        {/* ✅ Ruta para ver detalle individual */}
+        <Route path="usuarios/:id" element={<UserDetailPage />} />
       </Route>
     </>
   )
 );
+
 
 export default function AppRoutes() {
   return (

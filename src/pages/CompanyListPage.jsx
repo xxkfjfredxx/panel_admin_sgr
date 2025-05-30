@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useEmpresas } from "@/hooks/empresas/useEmpresas";
 import { useEliminarEmpresa } from "@/hooks/empresas/useEliminarEmpresa";
 
-
 export default function CompanyListPage() {
   const navigate = useNavigate();
   const { data: empresas = [], isLoading, isError } = useEmpresas();
@@ -47,6 +46,12 @@ export default function CompanyListPage() {
                 className="text-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
                 Ver / Modificar
+              </button>
+              <button
+                onClick={() => navigate(`/home/empresas/${empresa.id}/usuarios`)}
+                className="text-sm px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+              >
+                Usuarios
               </button>
               <button
                 onClick={() => handleEliminar(empresa.id)}

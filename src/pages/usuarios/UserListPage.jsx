@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useUsuarios } from "@/hooks/usuarios/useUsuarios";
+import UsuarioItem from "@/components/usuarios/UsuarioItem";
 
 export default function UserListPage() {
   const navigate = useNavigate();
@@ -22,19 +23,11 @@ export default function UserListPage() {
       {isLoading && <p>Cargando usuarios...</p>}
       {isError && <p className="text-red-500">Error al cargar usuarios.</p>}
 
-      <ul className="space-y-2">
+      <div className="space-y-2">
         {usuarios.map((usuario) => (
-          <li
-            key={usuario.id}
-            className="p-4 bg-white dark:bg-gray-800 rounded shadow"
-          >
-            <p className="font-semibold">{usuario.username}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {usuario.email}
-            </p>
-          </li>
+          <UsuarioItem key={usuario.id} usuario={usuario} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
