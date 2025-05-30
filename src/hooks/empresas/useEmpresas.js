@@ -1,19 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import api from '@/services/api';
 import { API_ROUTES } from '@/configs/routes';
 
-export  function useEmpresas() {
+export function useEmpresas({ page = 1, search = '' }) {
   return useQuery({
-    queryKey: ['empresas'],
+    queryKey: ['empresas', page, search],
     queryFn: async () => {
-      const res = await api.get(API_ROUTES.EMPRESAS);
-      return res.data?.results ?? res.data ?? [];
+      const res = await api.get(API_ROUTES.EMPRESAS, {
+        params: { page, search }
+      });
+      return res.data;
     },
+    keepPreviousData: true,
   });
 }
-
-
-
-
-
-

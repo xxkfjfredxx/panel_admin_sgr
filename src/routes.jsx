@@ -17,6 +17,7 @@ import CompanyDetailPage     from '@/pages/CompanyDetailPage';
 import EmpresaUsuariosPage   from '@/pages/usuarios/EmpresaUsuariosPage'; // ✅ agregado
 import ErrorFallback         from '@/components/ErrorFallback';
 import UserDetailPage        from '@/pages/usuarios/UserDetailPage';
+import CompanyRolesPage      from "@/pages/companies/CompanyRolesPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,7 +30,7 @@ const router = createBrowserRouter(
         <Route path="empresas" element={<CompanyListPage />} />
         <Route path="empresas/crear" element={<RegisterCompanyPage />} />
         <Route path="empresas/:id" element={<CompanyDetailPage />} errorElement={<ErrorFallback />} />
-        
+        <Route path="empresas/:id/roles" element={<CompanyRolesPage />} />
         {/* ✅ Ruta faltante agregada */}
         <Route path="empresas/:id/usuarios" element={<EmpresaUsuariosPage />} />
         <Route path="empresas/:id/usuarios/crear" element={<RegisterUserPage />} />
