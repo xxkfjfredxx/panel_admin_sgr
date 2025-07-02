@@ -5,7 +5,13 @@ export default function useCrearRol() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (nuevoRol) => api.post('/user-roles/', nuevoRol),
+    mutationFn: (nuevoRol) => {
+      if (!nuevoRol.company) {
+        throw new Error("El rol debe incluir la empresa (company).");
+      }
+      return api.post('/user-roles/', nuevoRol);
+    },
+
     onSuccess: (_, nuevoRol) => {
       queryClient.invalidateQueries({ queryKey: ['roles-empresa', nuevoRol.company] });
     },

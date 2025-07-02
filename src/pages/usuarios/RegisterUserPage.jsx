@@ -1,35 +1,55 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useCrearUsuario, useCrearRol, useRolesPorEmpresa } from "@/hooks/usuarios";
+import {
+  useCrearUsuario,
+  useCrearRol,
+  useRolesPorEmpresa,
+} from "@/hooks/usuarios";
 
 export default function RegisterUserPage() {
+  /* ------------------------------------------------------------
+   * hooks
+   * ----------------------------------------------------------- */
   const { id: empresaId } = useParams();
-  const navigate = useNavigate();
-  const crearUsuario = useCrearUsuario();
-  const crearRol = useCrearRol();
-  const { data: roles = [] } = useRolesPorEmpresa(empresaId);
+  const navigate          = useNavigate();
+  const crearUsuario      = useCrearUsuario();
+  const crearRol          = useCrearRol();
+  const { data: roles = [], refetch } = useRolesPorEmpresa(empresaId);
 
+  /* ------------------------------------------------------------
+   * estado local
+   * ----------------------------------------------------------- */
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
     first_name: "",
     last_name: "",
-    role: "", // almacena el ID del rol
+    role: "",
   });
 
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [nuevoRol, setNuevoRol] = useState({ name: "", description: "" });
+  const [nuevoRol, setNuevoRol] = useState({
+    name: "",
+    description: "",
+    company: Number(empresaId),
+  });
 
-  const handleChange = (e) => {
+  /* ------------------------------------------------------------
+   * handlers
+   * ----------------------------------------------------------- */
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const { role, ...rest } = form;
-    const payload = { ...rest, role_id: role }; // 👈 corregido aquí
+    const payload = {
+      ...rest,
+      role_id: Number(role),
+      company: Number(empresaId),
+    };
 
     crearUsuario.mutate(payload, {
       onSuccess: () => navigate(`/home/empresas/${empresaId}/usuarios`),
@@ -37,20 +57,37 @@ export default function RegisterUserPage() {
     });
   };
 
+  const handleAbrirModal = () => {
+    setNuevoRol({
+      name: "",
+      description: "",
+      company: Number(empresaId),
+    });
+    setMostrarModal(true);
+  };
+
   const handleCrearRol = () => {
     crearRol.mutate(
-      { ...nuevoRol, company: empresaId },
+      nuevoRol,
       {
         onSuccess: (res) => {
-          setForm({ ...form, role: res.data.id });
-          setNuevoRol({ name: "", description: "" });
+          setForm((f) => ({ ...f, role: res.data.id }));
+          setNuevoRol({
+            name: "",
+            description: "",
+            company: Number(empresaId),
+          });
           setMostrarModal(false);
+          refetch();
         },
         onError: () => alert("No se pudo crear el rol."),
       }
     );
   };
 
+  /* ------------------------------------------------------------
+   * render
+   * ----------------------------------------------------------- */
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-indigo-700 dark:text-indigo-400">
@@ -96,15 +133,14 @@ export default function RegisterUserPage() {
                 </option>
               ))}
             </select>
-            {roles.length === 0 && (
-              <button
-                type="button"
-                onClick={() => setMostrarModal(true)}
-                className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm"
-              >
-                + Rol
-              </button>
-            )}
+
+            <button
+              type="button"
+              onClick={handleAbrirModal}
+              className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm"
+            >
+              + Rol
+            </button>
           </div>
         </div>
 
@@ -123,6 +159,7 @@ export default function RegisterUserPage() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full">
             <h2 className="text-lg font-semibold mb-4">Nuevo Rol</h2>
+
             <div className="space-y-3">
               <div>
                 <label className="block text-sm mb-1">Nombre</label>
@@ -135,6 +172,7 @@ export default function RegisterUserPage() {
                   className="w-full px-4 py-2 border rounded-md dark:bg-gray-900 dark:text-white"
                 />
               </div>
+
               <div>
                 <label className="block text-sm mb-1">Descripción</label>
                 <textarea
@@ -145,6 +183,7 @@ export default function RegisterUserPage() {
                   className="w-full px-4 py-2 border rounded-md dark:bg-gray-900 dark:text-white"
                 />
               </div>
+
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setMostrarModal(false)}
