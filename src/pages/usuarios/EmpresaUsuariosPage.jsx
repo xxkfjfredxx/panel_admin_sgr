@@ -59,7 +59,7 @@ export default function EmpresaUsuariosPage() {
           <p className="text-gray-500 dark:text-gray-400">No hay usuarios registrados.</p>
         ) : (
           usuarios.map((usuario) => (
-            <UsuarioItem key={usuario.id} usuario={usuario} />
+            <UsuarioItem key={usuario.id} usuario={usuario} empresaId={empresaId} />
           ))
         )}
       </div>

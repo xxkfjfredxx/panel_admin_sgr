@@ -8,7 +8,10 @@ export default function useUsuariosPorEmpresa({ empresaId, page = 1, search = ''
     queryKey: ['usuarios-empresa', empresaId, page, search],
     queryFn: async () => {
       const res = await api.get('/users/', {
-        params: { empresa: empresaId, page, search }
+        params: { empresa: empresaId, page, search },
+        headers: {
+          'X-Active-Company': empresaId, // ← este es el header que tu backend espera
+        },
       });
 
       // filtramos solo roles importantes

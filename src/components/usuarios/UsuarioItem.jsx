@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 
-export default function UsuarioItem({ usuario }) {
+export default function UsuarioItem({ usuario, empresaId }) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [editando, setEditando] = useState(false);
@@ -20,7 +20,11 @@ export default function UsuarioItem({ usuario }) {
 
   const handleGuardar = async () => {
     try {
-      await api.patch(`/users/${usuario.id}/`, form);
+      await api.patch(`/users/${usuario.id}/`, form, {
+        headers: {
+          'X-Active-Company': empresaId,
+        },
+      });
       queryClient.invalidateQueries(['usuarios']);
       setEditando(false);
     } catch (error) {
@@ -31,7 +35,11 @@ export default function UsuarioItem({ usuario }) {
   const handleEliminar = async () => {
     if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
     try {
-      await api.delete(`/users/${usuario.id}/`);
+      await api.delete(`/users/${usuario.id}/`, {
+        headers: {
+          'X-Active-Company': empresaId,
+        },
+      });
       queryClient.invalidateQueries(['usuarios']);
     } catch (error) {
       alert('Error al eliminar el usuario.');
@@ -78,7 +86,11 @@ export default function UsuarioItem({ usuario }) {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => navigate(`/home/usuarios/${usuario.id}`)}
+              onClick={() =>
+                navigate(`/home/usuarios/${usuario.id}`, {
+                  state: { empresaId }, // ← Enviamos empresa activa
+                })
+              }
               className="px-3 py-1 bg-blue-600 text-white rounded"
             >
               Ver detalles

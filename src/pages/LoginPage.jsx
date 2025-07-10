@@ -4,7 +4,7 @@ import api from "@/services/api";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");  // Cambié de username a email
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -13,7 +13,8 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await api.post("/login/", { username, password });
+      // Enviar email en lugar de username
+      const res = await api.post("/login/", { email, password });
 
       const { token, user } = res.data;
 
@@ -46,12 +47,12 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Usuario</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Correo electrónico</label> {/* Cambié de Usuario a Correo electrónico */}
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ej. admin"
+              type="email"  // Cambié a tipo email para validación automática
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}  // Cambié de setUsername a setEmail
+              placeholder="Ej. usuario@dominio.com"
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-800 dark:text-white"
               required
             />

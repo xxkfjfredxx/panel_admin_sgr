@@ -1,16 +1,21 @@
-// Página para ver los detalles de un usuario específico
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/services/api';
 
 export default function UserDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const empresaId = location.state?.empresaId;
 
   const { data: usuario, isLoading, isError } = useQuery({
     queryKey: ['usuario', id],
     queryFn: async () => {
-      const res = await api.get(`/users/${id}/`);
+      const res = await api.get(`/users/${id}/`, {
+        headers: {
+          'X-Active-Company': empresaId  // 👈 aquí se lo mandas al backend
+        }
+      });
       return res.data;
     },
   });
