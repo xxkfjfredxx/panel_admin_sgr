@@ -12,8 +12,15 @@ export default function EmpresaUsuariosPage() {
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [includeDeleted, setIncludeDeleted] = useState(false); // ✅ Nuevo estado
 
-  const { data, isLoading, isError } = useUsuariosPorEmpresa({ empresaId, page, search: query });
+  const { data, isLoading, isError } = useUsuariosPorEmpresa({
+    empresaId,
+    page,
+    search: query,
+    includeDeleted,
+  });
+
   const usuarios = data?.results || [];
 
   const handleBuscar = () => {
@@ -35,20 +42,38 @@ export default function EmpresaUsuariosPage() {
         </button>
       </div>
 
-      <div className="flex gap-2 items-center">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por nombre, usuario o correo"
-          className="px-4 py-2 border rounded-md dark:bg-gray-900 dark:text-white"
-        />
-        <button
-          onClick={handleBuscar}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          Buscar
-        </button>
+      <div className="flex flex-col md:flex-row md:items-center gap-4">
+        <div className="flex items-center gap-2">
+          <input
+            id="includeDeleted"
+            type="checkbox"
+            checked={includeDeleted}
+            onChange={() => {
+              setIncludeDeleted(!includeDeleted);
+              setPage(1);
+            }}
+            className="form-checkbox h-5 w-5 text-indigo-600"
+          />
+          <label htmlFor="includeDeleted" className="text-sm text-gray-700 dark:text-gray-300">
+            Ver usuarios eliminados
+          </label>
+        </div>
+
+        <div className="flex gap-2 items-center">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre, usuario o correo"
+            className="px-4 py-2 border rounded-md dark:bg-gray-900 dark:text-white"
+          />
+          <button
+            onClick={handleBuscar}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            Buscar
+          </button>
+        </div>
       </div>
 
       {isLoading && <p>Cargando usuarios...</p>}
