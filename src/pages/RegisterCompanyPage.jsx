@@ -1,31 +1,41 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCrearEmpresa } from "@/hooks/empresas/useCrearEmpresa";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function RegisterCompanyPage() {
   const [name, setName] = useState("");
   const [nit, setNit] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false); // 👈
   const navigate = useNavigate();
   const crearEmpresa = useCrearEmpresa();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // 👈 Mostrar loading de inmediato
 
     crearEmpresa.mutate(
       { name, nit },
       {
         onSuccess: () => {
-          navigate("/home/empresas");
+          setTimeout(() => {
+            navigate("/home/empresas");
+          }, 300);
         },
         onError: () => {
           alert("Error al crear empresa. Verifica los datos.");
+          setIsSubmitting(false); // 👈 Volver a habilitar el botón
         },
       }
     );
   };
 
+  const isLoading = crearEmpresa.isLoading || isSubmitting;
+
   return (
-    <div className="max-w-xl mx-auto space-y-6">
+    <div className="relative max-w-xl mx-auto space-y-6">
+      {isLoading && <LoadingOverlay text="Registrando empresa..." />}
+
       <h1 className="text-2xl font-bold text-indigo-700 dark:text-indigo-400">
         Registrar Nueva Empresa
       </h1>
@@ -65,10 +75,10 @@ export default function RegisterCompanyPage() {
         <div className="flex justify-end">
           <button
             type="submit"
-            disabled={crearEmpresa.isLoading}
+            disabled={isLoading}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md disabled:opacity-50"
           >
-            {crearEmpresa.isLoading ? "Registrando..." : "Registrar"}
+            {isLoading ? "Registrando..." : "Registrar"}
           </button>
         </div>
       </form>
