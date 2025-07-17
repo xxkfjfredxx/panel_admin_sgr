@@ -12,7 +12,7 @@ export default function RegisterUserPage() {
    * ----------------------------------------------------------- */
   const { id: empresaId } = useParams();
   const navigate          = useNavigate();
-  const crearUsuario      = useCrearUsuario();
+  const crearUsuario      = useCrearUsuario(empresaId);
   const crearRol          = useCrearRol();
   const { data: roles = [], refetch } = useRolesPorEmpresa(empresaId);
 
