@@ -24,7 +24,7 @@ export default function CompanyRolesPage() {
   const { data: roles = [], isLoading } = useQuery({
     queryKey: ['roles', companyId],
     queryFn: async () => {
-      const res = await api.get(`/user-roles/?empresa=${companyId}`);
+      const res = await api.get(`/v1/user-roles/?empresa=${companyId}`);
       return res.data?.results ?? [];
     },
   });
@@ -38,7 +38,7 @@ export default function CompanyRolesPage() {
   const [editingId, setEditingId] = useState(null);
 
   const crearRol = useMutation({
-    mutationFn: (data) => api.post('/user-roles/', { ...data, company: companyId }),
+    mutationFn: (data) => api.post('/v1/user-roles/', { ...data, company: companyId }),
     onSuccess: () => {
       queryClient.invalidateQueries(['roles', companyId]);
       setForm({ name: '', description: '', permissions: [], access_level: 1 });
@@ -46,7 +46,7 @@ export default function CompanyRolesPage() {
   });
 
   const editarRol = useMutation({
-    mutationFn: ({ id, data }) => api.patch(`/user-roles/${id}/`, data),
+    mutationFn: ({ id, data }) => api.patch(`/v1/user-roles/${id}/`, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['roles', companyId]);
       setEditingId(null);
@@ -54,7 +54,7 @@ export default function CompanyRolesPage() {
   });
 
   const eliminarRol = useMutation({
-    mutationFn: (id) => api.delete(`/user-roles/${id}/`),
+    mutationFn: (id) => api.delete(`/v1/user-roles/${id}/`),
     onSuccess: () => {
       queryClient.invalidateQueries(['roles', companyId]);
     },

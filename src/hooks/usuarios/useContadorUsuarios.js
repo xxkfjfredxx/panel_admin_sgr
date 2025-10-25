@@ -6,7 +6,7 @@ export  function useContadorUsuarios() {
     queryKey: ['usuarios-count'],
     queryFn: async () => {
       try {
-        const res = await api.get('/users/');
+        const res = await api.get('/v1/users/');
         return res.data?.count ?? 0;
       } catch (error) {
         console.warn('⚠️ No se pudo cargar usuarios:', error.response?.status);

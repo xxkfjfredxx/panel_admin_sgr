@@ -6,7 +6,7 @@ export function useCrearUsuario(empresaId) {
 
   return useMutation({
     mutationFn: (nuevoUsuario) =>
-      api.post('/users/', nuevoUsuario, {
+      api.post('/v1/users/', nuevoUsuario, {
         headers: {
           'X-Active-Company': String(empresaId),
         },

@@ -9,7 +9,7 @@ export default function useCrearRol() {
       if (!nuevoRol.company) {
         throw new Error("El rol debe incluir la empresa (company).");
       }
-      return api.post('/user-roles/', nuevoRol);
+      return api.post('/v1/user-roles/', nuevoRol);
     },
 
     onSuccess: (_, nuevoRol) => {

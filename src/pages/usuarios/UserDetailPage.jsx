@@ -11,7 +11,7 @@ export default function UserDetailPage() {
   const { data: usuario, isLoading, isError } = useQuery({
     queryKey: ['usuario', id],
     queryFn: async () => {
-      const res = await api.get(`/users/${id}/`, {
+      const res = await api.get(`/v1/users/${id}/`, {
         headers: {
           'X-Active-Company': empresaId  // 👈 aquí se lo mandas al backend
         }

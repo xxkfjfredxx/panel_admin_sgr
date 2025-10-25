@@ -20,7 +20,7 @@ export default function UsuarioItem({ usuario, empresaId }) {
 
   const handleGuardar = async () => {
     try {
-      await api.patch(`/users/${usuario.id}/`, form, {
+      await api.patch(`/v1/users/${usuario.id}/`, form, {
         headers: { 'X-Active-Company': empresaId },
       });
       queryClient.invalidateQueries(['usuarios']);
@@ -33,7 +33,7 @@ export default function UsuarioItem({ usuario, empresaId }) {
   const handleEliminar = async () => {
     if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
     try {
-      await api.delete(`/users/${usuario.id}/`, {
+      await api.delete(`/v1/users/${usuario.id}/`, {
         headers: { 'X-Active-Company': empresaId },
       });
       queryClient.invalidateQueries(['usuarios']);
@@ -44,7 +44,7 @@ export default function UsuarioItem({ usuario, empresaId }) {
 
   const handleRestaurar = async () => {
     try {
-      await api.post(`/users/${usuario.id}/restaurar/`, {}, {
+      await api.post(`/v1/users/${usuario.id}/restaurar/`, {}, {
         headers: { 'X-Active-Company': empresaId },
       });
       queryClient.invalidateQueries(['usuarios']);
@@ -56,7 +56,7 @@ export default function UsuarioItem({ usuario, empresaId }) {
   const handleEliminarDefinitivo = async () => {
     if (!confirm('¿Eliminar permanentemente este usuario?')) return;
     try {
-      await api.delete(`/users/${usuario.id}/eliminar-definitivamente/`, {
+      await api.delete(`/v1/users/${usuario.id}/eliminar-definitivamente/`, {
         headers: { 'X-Active-Company': empresaId },
       });
       queryClient.invalidateQueries(['usuarios']);

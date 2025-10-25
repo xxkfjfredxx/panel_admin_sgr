@@ -7,7 +7,7 @@ export default function useUsuariosPorEmpresa({ empresaId, page = 1, search = ''
   return useQuery({
     queryKey: ['usuarios-empresa', empresaId, page, search, includeDeleted],
     queryFn: async () => {
-      const res = await api.get('/users/', {
+      const res = await api.get('/v1/users/', {
         params: {
           empresa: empresaId,
           page,

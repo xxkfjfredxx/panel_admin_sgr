@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "@/services/api";
+import { API_ROUTES } from "@/configs/routes";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");  // Cambié de username a email
+  const [email, setEmail] = useState("");    // seguimos usando email
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -13,19 +14,37 @@ export default function LoginPage() {
     setError("");
 
     try {
-      // Enviar email en lugar de username
-      const res = await api.post("/login/", { email, password });
+      // ⇨ usa la ruta correcta del backend vía tu api.js
+      const res = await api.post(API_ROUTES.LOGIN, { email, password });
+      const { access, refresh, token, company_id, company_name, user } = res.data || {};
 
-      const { token, user } = res.data;
+      // Tokens (access/refresh). 'token' es legacy si tu backend aún lo manda.
+      if (access)  localStorage.setItem("access_token", access);
+      if (refresh) localStorage.setItem("refresh_token", refresh);
+      if (token)   localStorage.setItem("token", token);
 
-      // ✅ Guardar en localStorage
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      // Contexto de empresa (lo exige tu middleware por X-Active-Company)
+      if (company_id != null)   localStorage.setItem("company_id", String(company_id));
+      if (company_name != null) localStorage.setItem("company_name", String(company_name));
 
-      // Redirigir al dashboard
-      navigate("/home");
+      // Usuario (si lo usas en el cliente)
+      if (user) localStorage.setItem("user", JSON.stringify(user));
+
+      // CSRF doble-submit para mutaciones (cookie NO httpOnly)
+      const csrf = cryptoRandomHex(32);
+      setCookie("csrf_token", csrf, {
+        days: 7,
+        sameSite: "Lax",
+        secure: window.location.protocol === "https:",
+      });
+
+      // Redirige a tu home del panel
+      navigate("/home", { replace: true });
     } catch (err) {
-      setError("Usuario o contraseña incorrectos.");
+      const detail =
+        err?.response?.data?.detail ||
+        (err?.response?.status === 401 ? "Usuario o contraseña incorrectos." : "No fue posible iniciar sesión.");
+      setError(detail);
     }
   };
 
@@ -47,11 +66,13 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Correo electrónico</label> {/* Cambié de Usuario a Correo electrónico */}
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Correo electrónico
+            </label>
             <input
-              type="email"  // Cambié a tipo email para validación automática
+              type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}  // Cambié de setUsername a setEmail
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Ej. usuario@dominio.com"
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-800 dark:text-white"
               required
@@ -59,7 +80,9 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contraseña</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Contraseña
+            </label>
             <input
               type="password"
               value={password}
@@ -84,4 +107,19 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+/* ===== helpers locales (sin tocar diseño) ===== */
+function setCookie(name, value, { days = 7, path = "/", sameSite = "Lax", secure = false } = {}) {
+  const d = new Date();
+  d.setTime(d.getTime() + days * 86400 * 1000);
+  document.cookie =
+    `${name}=${encodeURIComponent(value)}; Expires=${d.toUTCString()}; Path=${path}; SameSite=${sameSite}` +
+    (secure ? "; Secure" : "");
+}
+
+function cryptoRandomHex(len = 32) {
+  const arr = new Uint8Array(len / 2);
+  window.crypto.getRandomValues(arr);
+  return Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
 }
